@@ -172,7 +172,14 @@ import Swal from 'sweetalert2'
 export default {
     data() {
         return {
-            foods: [],
+            foods: [
+                { nama: "Nasi Goreng", harga: 15000, foto: "https://picsum.photos/id/100/300/200" },
+                { nama: "Mie Ayam", harga: 12000, foto: "https://picsum.photos/id/200/300/200" },
+                { nama: "Soto Ayam", harga: 20000, foto: "https://picsum.photos/id/400/300/200" },
+                { nama: "Tempe Goreng", harga: 20000, foto: "https://picsum.photos/id/500/300/200" },
+                { nama: "Nasi Pecel", harga: 20000, foto: "https://picsum.photos/id/600/300/200" },
+                { nama: "Sayur Bayam", harga: 20000, foto: "https://picsum.photos/id/700/300/200" },
+            ],
             cart: [],
             hasilKembalian: 0,
             uangPembeli: 0,
