@@ -5,10 +5,10 @@
                 <div class="row">
                     <div class="col-md-3 p-2 mx-4" v-for="(food, index) in foods" :key="index">
                         <div class="card mb-3 text-center foods" @click="addToCart(food)">
-                            <img :src="food.image" class="card-img-top" alt="food-image">
+                            <img :src="food.foto" class="card-img-top" alt="food-image">
                             <div class="card-body">
-                                <h5 class="card-title">{{ food.name }}</h5>
-                                <p class="card-text text-info"><strong>Rp. {{ food.price }}</strong></p>
+                                <h5 class="card-title">{{ food.nama }}</h5>
+                                <p class="card-text text-info"><strong>Rp. {{ food.harga }}</strong></p>
                             </div>
                         </div>
                     </div>
@@ -19,11 +19,11 @@
                 <div class="list-group">
                     <div v-for="(item, index) in cart" :key="index" class="px-3 mb-3 text-center">
                         <div class="card-body d-flex align-items-center justify-content-between">
-                            <img :src="item.image" alt="food-image" width="70" height="70">
-                            <span class="ms-3">{{ item.name }}</span>
+                            <img :src="item.foto" alt="food-image" width="70" height="70">
+                            <span class="ms-3">{{ item.nama }}</span>
                             <span class="ms-auto text-info fw-bold"><span class="text-dark fw-bold">x{{ item.quantity }}
                                 </span>
-                                Rp.{{ item.price.toLocaleString() }}</span>
+                                Rp.{{ item.harga.toLocaleString() }}</span>
                         </div>
                     </div>
                 </div>
@@ -67,10 +67,10 @@
                                                 <tbody>
                                                     <tr v-for="(item, index) in cart" :key="index">
                                                         <td scope="row">{{ index + 1 }}</td>
-                                                        <td>{{ item.name }}</td>
-                                                        <td><img :src="item.image" alt="food-image" width="40" height="40">
+                                                        <td>{{ item.nama }}</td>
+                                                        <td><img :src="item.foto" alt="food-image" width="40" height="40">
                                                         </td>
-                                                        <td>Rp.{{ item.price.toLocaleString() }}</td>
+                                                        <td>Rp.{{ item.harga.toLocaleString() }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -126,10 +126,10 @@
             <tbody>
                 <tr v-for="(item, index) in cart" :key="index">
                     <td>{{ index + 1 }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>{{ item.nama }}</td>
                     <td>{{ item.quantity }}</td>
-                    <td>Rp. {{ item.price }}</td>
-                    <td>Rp. {{ item.price * item.quantity }}</td>
+                    <td>Rp. {{ item.harga }}</td>
+                    <td>Rp. {{ item.harga * item.quantity }}</td>
                 </tr>
                 <tr>
                     <td colspan="4" class="text-end"><strong>Total:</strong></td>
@@ -166,36 +166,43 @@
 
 
 <script>
+import axios from 'axios'
 import Swal from 'sweetalert2'
 
 export default {
     data() {
         return {
-            foods: [
-                { name: "Nasi Goreng", price: 15000, image: "https://picsum.photos/id/100/300/200" },
-                { name: "Mie Ayam", price: 12000, image: "https://picsum.photos/id/200/300/200" },
-                { name: "Soto Ayam", price: 20000, image: "https://picsum.photos/id/400/300/200" },
-                { name: "Tempe Goreng", price: 20000, image: "https://picsum.photos/id/500/300/200" },
-                { name: "Nasi Pecel", price: 20000, image: "https://picsum.photos/id/600/300/200" },
-                { name: "Sayur Bayam", price: 20000, image: "https://picsum.photos/id/700/300/200" },
-            ],
+            foods: [],
             cart: [],
             hasilKembalian: 0,
             uangPembeli: 0,
+            baseUrl: import.meta.env.VITE_APP_BASE_URI,
         };
     },
     computed: {
         total() {
-            return this.cart.reduce((total, item) => total + item.price * item.quantity, 0);
+            return this.cart.reduce((total, item) => total + item.harga * item.quantity, 0);
         },
     },
+    mounted() {
+        this.fetchFoods();
+    },
     methods: {
+        async fetchFoods() {
+            try {
+                const response = await axios.get(`${this.baseUrl}/api/v1/foods`);
+                this.foods = response.data;
+                console.log(response)
+            } catch (error) {
+                console.error(error)
+            }
+        },
         addToCart(food) {
-            const itemIndex = this.cart.findIndex((item) => item.name === food.name);
+            const itemIndex = this.cart.findIndex((item) => item.nama === food.nama);
             if (itemIndex >= 0) {
                 this.cart[itemIndex].quantity++;
             } else {
-                this.cart.push({ name: food.name, image: food.image, price: food.price, quantity: 1 });
+                this.cart.push({ nama: food.nama, foto: food.foto, harga: food.harga, quantity: 1 });
             }
         },
         hitungKembalian() {
